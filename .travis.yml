@@ -3,6 +3,7 @@ addons:
   apt:
     packages:
     - sshpass
+    - gettext-base
 before_script:
 - chmod 755 ./deploy.sh
 script:
