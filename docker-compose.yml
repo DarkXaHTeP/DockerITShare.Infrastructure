@@ -1,0 +1,6 @@
+version: '3'
+services:
+  sampleapp:
+    image: darkxahtep/docker-itshare-sampleapp:1
+    container_name: docker-itshare-sampleapp
+    restart: always
