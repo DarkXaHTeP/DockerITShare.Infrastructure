@@ -26,7 +26,7 @@ services:
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: docker-itshare-letsencrypt
-    restart: always  
+    restart: always
     volumes_from:
       - nginx-proxy
     volumes:
@@ -36,9 +36,22 @@ services:
       - nginx-proxy
     depends_on:
       - nginx-proxy
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2017-CU13-ubuntu
+    container_name: docker-itshare-sqlserver
+    restart: always
+    ports:
+      - 1433:1433
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: $SQLSERVER_SA_PASSWORD
+      MSSQL_PID: Developer
+    volumes:
+      - sqldata:/var/opt/mssql
 volumes:
   conf:
   vhost:
   html:
   dhparam:
   certs:
+  sqldata:
