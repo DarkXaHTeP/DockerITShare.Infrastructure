@@ -1,0 +1,9 @@
+language: bash
+addons:
+  apt:
+    packages:
+    - sshpass
+before_script:
+- chmod 755 ./deploy.sh
+script:
+  - ./deploy.sh
