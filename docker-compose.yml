@@ -1,7 +1,7 @@
 version: '2'
 services:
   sampleapp:
-    image: darkxahtep/docker-itshare-sampleapp:5
+    image: darkxahtep/docker-itshare-sampleapp:8
     container_name: docker-itshare-sampleapp
     restart: always
     environment:
