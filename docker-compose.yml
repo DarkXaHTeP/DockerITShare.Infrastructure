@@ -1,7 +1,7 @@
 version: '2'
 services:
   sampleapp:
-    image: darkxahtep/docker-itshare-sampleapp:8
+    image: darkxahtep/docker-itshare-sampleapp:10
     container_name: docker-itshare-sampleapp
     restart: always
     environment:
@@ -10,10 +10,13 @@ services:
       LETSENCRYPT_HOST: sampleapp.darkxahtep.co.ua
       LETSENCRYPT_EMAIL: darkxahtep@gmail.com
       ConnectionStrings__Word_DB: "$ConnectionStrings__Word_DB"
+      ConnectionStrings__Word_Redis: "$ConnectionStrings__Word_Redis"
     links:
       - sqlserver
+      - redis
     depends_on:
       - sqlserver
+      - redis  
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: docker-itshare-nginx
@@ -53,6 +56,10 @@ services:
       MSSQL_PID: Developer
     volumes:
       - sqldata:/var/opt/mssql
+  redis:
+    image: redis:5.0.4-alpine3.9
+    container_name: docker-itshare-redis
+    restart: always
 volumes:
   conf:
   vhost:
