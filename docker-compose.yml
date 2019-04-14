@@ -16,13 +16,15 @@ services:
       - redis
     depends_on:
       - sqlserver
-      - redis  
-      - logspout
+      - redis
+      - logstash
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: docker-itshare-nginx
-    depends_on:
-      - logspout
     restart: always
     ports:
       - 80:80
@@ -63,24 +65,18 @@ services:
     image: redis:5.0.4-alpine3.9
     container_name: docker-itshare-redis
     restart: always
-  logspout:  
-    image: gliderlabs/logspout:v3.2.6
-    command: 'syslog://logstash:5000'
-    restart: always
-    links:
-      - logstash
-    depends_on:
-      - logstash
-    volumes:
-      - '/var/run/docker.sock:/tmp/docker.sock'
   logstash:  
-    image: darkxahtep/logstash-json:7.0.0
-    restart: always  
+    image: logstash:7.0.0
+    image: logstash
+    command: 'logstash -e "input { gelf {} } output { elasticsearch { hosts => elasticsearch } }"'
+    ports:
+      - 12201:12201/udp
+    restart: always
     links:
       - elasticsearch
   kibana:
     image: kibana:7.0.0
-    restart: always  
+    restart: always
     links:
       - elasticsearch
     ports:
@@ -97,7 +93,6 @@ services:
       - transport.host=127.0.0.1
       - http.host=0.0.0.0
       - discovery.type=single-node
-      - LOGSPOUT=ignore
     ports:
       - 9200:9200
 volumes:
