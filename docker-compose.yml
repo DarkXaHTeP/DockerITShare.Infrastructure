@@ -55,14 +55,19 @@ services:
       ACCEPT_EULA: Y
       SA_PASSWORD: $SQLSERVER_SA_PASSWORD
       MSSQL_PID: Developer
+    depends_on:
+      - filebeat
     volumes:
       - sqldata:/var/opt/mssql
   redis:
     image: redis:5.0.4-alpine3.9
     container_name: docker-itshare-redis
     restart: always
+    depends_on:
+      - filebeat
   kibana:
     image: kibana:7.0.0
+    container_name: docker-itshare-kibana
     restart: always
     links:
       - elasticsearch
@@ -75,6 +80,7 @@ services:
       LETSENCRYPT_EMAIL: darkxahtep@gmail.com
   elasticsearch:  
     image: elasticsearch:7.0.0
+    container_name: docker-itshare-elasticsearch
     restart: always  
     environment:
       - transport.host=127.0.0.1
@@ -84,9 +90,12 @@ services:
       - 9200:9200
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.0.0
+    container_name: docker-itshare-filebeat
     command: filebeat -e -strict.perms=false
     restart: always  
     user: root
+    depends_on:
+      - elasticsearch
     volumes:
       - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
