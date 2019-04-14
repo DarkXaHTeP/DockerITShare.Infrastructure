@@ -67,7 +67,6 @@ services:
     restart: always
   logstash:  
     image: logstash:7.0.0
-    image: logstash
     command: 'logstash -e "input { gelf {} } output { elasticsearch { hosts => elasticsearch } }"'
     ports:
       - 12201:12201/udp
