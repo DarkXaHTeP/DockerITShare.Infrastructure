@@ -17,11 +17,7 @@ services:
     depends_on:
       - sqlserver
       - redis
-      - logstash
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
+      - filebeat
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: docker-itshare-nginx
@@ -65,14 +61,6 @@ services:
     image: redis:5.0.4-alpine3.9
     container_name: docker-itshare-redis
     restart: always
-  logstash:  
-    image: logstash:7.0.0
-    command: 'logstash -e "input { gelf {} } output { elasticsearch { hosts => elasticsearch } }"'
-    ports:
-      - 12201:12201/udp
-    restart: always
-    links:
-      - elasticsearch
   kibana:
     image: kibana:7.0.0
     restart: always
@@ -94,6 +82,18 @@ services:
       - discovery.type=single-node
     ports:
       - 9200:9200
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.0.0
+    command: filebeat -e -strict.perms=false
+    restart: always  
+    user: root
+    volumes:
+      - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+    
 volumes:
   conf:
   vhost:

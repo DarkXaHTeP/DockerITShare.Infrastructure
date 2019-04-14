@@ -1,0 +1,6 @@
+filebeat.prospectors:
+  - type: docker
+    containers.ids:
+      - '*'
+processors:
+  - add_docker_metadata: ~
