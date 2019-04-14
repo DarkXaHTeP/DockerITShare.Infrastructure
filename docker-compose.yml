@@ -94,10 +94,10 @@ services:
     image: elasticsearch:7.0.0
     restart: always  
     environment:
-      - transport.host: "127.0.0.1"
-      - http.host: "0.0.0.0"
-      - discovery.type: single-node
-      - LOGSPOUT: ignore
+      - transport.host=127.0.0.1
+      - http.host=0.0.0.0
+      - discovery.type=single-node
+      - LOGSPOUT=ignore
     ports:
       - 9200:9200
 volumes:
