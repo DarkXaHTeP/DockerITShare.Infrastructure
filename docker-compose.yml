@@ -17,9 +17,12 @@ services:
     depends_on:
       - sqlserver
       - redis  
+      - logspout
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: docker-itshare-nginx
+    depends_on:
+      - logspout
     restart: always
     ports:
       - 80:80
@@ -60,6 +63,33 @@ services:
     image: redis:5.0.4-alpine3.9
     container_name: docker-itshare-redis
     restart: always
+  logspout:  
+    image: gliderlabs/logspout:v3.2.6
+    command: 'syslog://logstash:5000'
+    restart: always
+    links:
+      - logstash
+    depends_on:
+      - logstash
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+  logstash:  
+    image: darkxahtep/logstash-json:7.0.0
+    restart: always  
+    links:
+      - elasticsearch
+  kibana:
+    image: kibana:7.0.0
+    restart: always  
+    links:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+  elasticsearch:  
+    image: elasticsearch:7.0.0
+    restart: always  
+    environment:
+      - LOGSPOUT=ignore
 volumes:
   conf:
   vhost:
