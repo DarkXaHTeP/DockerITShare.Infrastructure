@@ -1,7 +1,7 @@
 version: '2'
 services:
   sampleapp:
-    image: darkxahtep/docker-itshare-sampleapp:10
+    image: darkxahtep/docker-itshare-sampleapp:11
     container_name: docker-itshare-sampleapp
     restart: always
     environment:
@@ -86,6 +86,8 @@ services:
       - transport.host=127.0.0.1
       - http.host=0.0.0.0
       - discovery.type=single-node
+    volumes:
+      - elasticdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
   filebeat:
@@ -107,3 +109,4 @@ volumes:
   dhparam:
   certs:
   sqldata:
+  elasticdata:
